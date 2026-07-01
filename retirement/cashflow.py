@@ -1,4 +1,5 @@
 from .projection import ProjectionYear
+from .portfolio import Portfolio
 
 class CashFlowEngine:
     def __init__(self, assumptions):
@@ -6,18 +7,19 @@ class CashFlowEngine:
 
     def run(self):
         hh=self.assumptions["household"]
-        p=self.assumptions["portfolio"]
+        portfolio=Portfolio.from_mapping(self.assumptions["portfolio"])
         rows=[]
         for year in range(2026,2061):
+            balances=portfolio.snapshot()
             rows.append(
                 ProjectionYear(
                     year,
                     year-hh["primary"]["birth_year"],
                     year-hh["spouse"]["birth_year"],
-                    p["taxable"],
-                    p["traditional_ira"],
-                    p["inherited_ira"],
-                    p["roth_ira"]
+                    balances["taxable"],
+                    balances["traditional_ira"],
+                    balances["inherited_ira"],
+                    balances["roth_ira"]
                 )
             )
         return rows

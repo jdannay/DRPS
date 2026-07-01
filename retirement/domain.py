@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from .portfolio import Portfolio
 
 @dataclass
 class Person:
@@ -6,16 +7,6 @@ class Person:
     birth_year:int
     def age(self, year:int)->int:
         return year-self.birth_year
-
-@dataclass
-class Portfolio:
-    taxable:float
-    traditional_ira:float
-    inherited_ira:float
-    roth_ira:float
-    @property
-    def total(self):
-        return self.taxable+self.traditional_ira+self.inherited_ira+self.roth_ira
 
 @dataclass
 class Household:

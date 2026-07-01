@@ -1,4 +1,11 @@
 [project]
 name='drps'
-version='0.2.0'
+version='0.5.0'
 requires-python='>=3.11'
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["retirement*"]

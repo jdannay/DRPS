@@ -4,6 +4,8 @@ from .logger import get_logger
 from .cashflow import CashFlowEngine
 from .spending import SpendingEngine
 from .events import EventEngine
+from .portfolio import Portfolio
+from . import __version__
 
 class DRPSApplication:
     def __init__(self):
@@ -11,10 +13,12 @@ class DRPSApplication:
 
     def run(self):
         a=load_assumptions(Path("data")/"assumptions.json")
+        portfolio=Portfolio.from_mapping(a["portfolio"])
         proj=CashFlowEngine(a).run()
         spend=SpendingEngine()
         events=EventEngine()
-        self.log.info("DRPS v0.4.1")
+        self.log.info(f"DRPS v{__version__}")
+        self.log.info(f"Starting portfolio: ${portfolio.total:,.0f}")
         self.log.info("Year  Age  Spending     Portfolio    Inheritance")
         self.log.info("------------------------------------------------")
         for r in proj[:5]:
