@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 
 ACCOUNT_NAMES = ("taxable", "traditional_ira", "inherited_ira", "roth_ira")
+ASSET_CLASSES = ("equities", "fixed_income", "alternatives", "cash")
 
 
 @dataclass
@@ -34,6 +35,13 @@ class Portfolio:
             rate = self._rate_for_account(rates, account)
             setattr(self, account, getattr(self, account) * (1 + rate))
         return self
+
+    def weighted_return_rates(self, expected_returns, allocations):
+        rates = {}
+        for account in ACCOUNT_NAMES:
+            allocation = allocations.get(account, {})
+            rates[account] = self.weighted_return_rate(expected_returns, allocation)
+        return rates
 
     def apply_advisor_fee(self, rate):
         if rate < 0:
@@ -93,3 +101,9 @@ class Portfolio:
     def _validate_account(self, account):
         if account not in ACCOUNT_NAMES:
             raise ValueError(f"unknown portfolio account: {account}")
+
+    def weighted_return_rate(self, expected_returns, allocation):
+        return sum(
+            allocation.get(asset_class, 0) * expected_returns.get(asset_class, 0)
+            for asset_class in ASSET_CLASSES
+        )

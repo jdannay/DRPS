@@ -2,5 +2,13 @@
  "household":{"primary":{"name":"Jeffrey","birth_year":1960},
  "spouse":{"name":"Kathryn","birth_year":1963}},
  "portfolio":{"taxable":1570000,"traditional_ira":2375000,
- "inherited_ira":255000,"roth_ira":40000}
+ "inherited_ira":255000,"roth_ira":40000},
+ "expected_returns":{"equities":0.065,"fixed_income":0.035,
+ "alternatives":0.045,"cash":0.02},
+ "allocations":{
+  "taxable":{"equities":0.60,"fixed_income":0.25,"alternatives":0.10,"cash":0.05},
+  "traditional_ira":{"equities":0.55,"fixed_income":0.35,"alternatives":0.05,"cash":0.05},
+  "inherited_ira":{"equities":0.45,"fixed_income":0.40,"alternatives":0.05,"cash":0.10},
+  "roth_ira":{"equities":0.80,"fixed_income":0.10,"alternatives":0.05,"cash":0.05}
+ }
 }

@@ -29,6 +29,28 @@ class PortfolioTest(unittest.TestCase):
         self.assertAlmostEqual(portfolio.inherited_ira, 300)
         self.assertAlmostEqual(portfolio.roth_ira, 500)
 
+    def test_weighted_return_rates_use_account_allocations(self):
+        portfolio = Portfolio(100, 200, 300, 400)
+        expected_returns = {
+            "equities": 0.10,
+            "fixed_income": 0.04,
+            "alternatives": 0.06,
+            "cash": 0.01,
+        }
+        allocations = {
+            "taxable": {"equities": 0.50, "fixed_income": 0.50},
+            "traditional_ira": {"equities": 1.00},
+            "inherited_ira": {"cash": 1.00},
+            "roth_ira": {"alternatives": 1.00},
+        }
+
+        rates = portfolio.weighted_return_rates(expected_returns, allocations)
+
+        self.assertAlmostEqual(rates["taxable"], 0.07)
+        self.assertAlmostEqual(rates["traditional_ira"], 0.10)
+        self.assertAlmostEqual(rates["inherited_ira"], 0.01)
+        self.assertAlmostEqual(rates["roth_ira"], 0.06)
+
     def test_apply_advisor_fee_reduces_balances_and_returns_fee(self):
         portfolio = Portfolio(100, 200, 300, 400)
 

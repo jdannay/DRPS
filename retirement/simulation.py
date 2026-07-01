@@ -28,7 +28,7 @@ class SimulationEngine:
         for year in range(self.start_year, self.end_year + 1):
             beginning_portfolio = portfolio.total
             before_returns = portfolio.total
-            portfolio.apply_returns(self.investment_returns_for(year))
+            portfolio.apply_returns(self.investment_returns_for(year, portfolio))
             investment_returns = portfolio.total - before_returns
 
             dividend_income = self.dividend_income_for(year)
@@ -74,8 +74,18 @@ class SimulationEngine:
     def end_year(self):
         return self.assumptions.get("simulation", {}).get("end_year", 2060)
 
-    def investment_returns_for(self, year):
+    def investment_returns_for(self, year, portfolio):
+        expected_returns = self.expected_returns_for(year)
+        allocations = self.account_allocations_for(year)
+        if expected_returns and allocations:
+            return portfolio.weighted_return_rates(expected_returns, allocations)
         return self.value_for_year("investment_returns", year, 0)
+
+    def expected_returns_for(self, year):
+        return self.year_config_for("expected_returns", year)
+
+    def account_allocations_for(self, year):
+        return self.year_config_for("allocations", year)
 
     def dividend_income_for(self, year):
         return self.value_for_year("dividend_income", year, 0)
@@ -94,4 +104,12 @@ class SimulationEngine:
         value = self.assumptions.get(key, default)
         if isinstance(value, dict):
             return value.get(str(year), value.get(year, value.get("default", default)))
+        return value
+
+    def year_config_for(self, key, year):
+        value = self.assumptions.get(key, {})
+        if isinstance(value, dict) and any(
+            year_key in value for year_key in (str(year), year, "default")
+        ):
+            return self.value_for_year(key, year, {})
         return value
