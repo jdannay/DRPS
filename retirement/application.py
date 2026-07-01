@@ -2,24 +2,25 @@ from pathlib import Path
 from retirement.config import load_assumptions
 from retirement.logger import get_logger
 from retirement.cashflow import CashFlowEngine
+from retirement.spending import SpendingEngine
+from retirement.events import EventEngine
 
 class DRPSApplication:
     def __init__(self):
         self.logger = get_logger("DRPS")
 
     def run(self):
-        self.logger.info("Dannay Retirement Planning System v0.3.1")
+        assumptions = load_assumptions(Path("data")/"assumptions.json")
+        projection = CashFlowEngine(assumptions).run()
+        spending = SpendingEngine()
+        events = EventEngine()
 
-        assumptions = load_assumptions(Path("data") / "assumptions.json")
-        engine = CashFlowEngine(assumptions)
-        projection = engine.run()
-
-        first = projection[0]
-
-        self.logger.info("")
-        self.logger.info("Retirement Projection")
-        self.logger.info("---------------------")
-        self.logger.info(f"Year: {first.year}")
-        self.logger.info(f"Your age: {first.your_age}")
-        self.logger.info(f"Spouse age: {first.spouse_age}")
-        self.logger.info(f"Portfolio: ${first.total_portfolio:,.0f}")
+        self.logger.info("Year  Age  Spending     Inheritance")
+        self.logger.info("-----------------------------------")
+        for row in projection[:5]:
+            s = spending.spending_for_year(row.year)
+            inh = events.inheritance_for_year(row.year)
+            self.logger.info(
+                f"{row.year}  {row.your_age:>3}  "
+                f"${s.total:>10,.0f}   ${inh:>9,.0f}"
+            )
