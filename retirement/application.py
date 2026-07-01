@@ -1,25 +1,25 @@
 from pathlib import Path
-from .config import load_assumptions
-from .logger import get_logger
+from retirement.config import load_assumptions
+from retirement.logger import get_logger
+from retirement.cashflow import CashFlowEngine
 
 class DRPSApplication:
     def __init__(self):
         self.logger = get_logger("DRPS")
 
     def run(self):
-        self.logger.info("Dannay Retirement Planning System v0.3.0")
-        config_path = Path("data") / "assumptions.json"
-        assumptions = load_assumptions(config_path)
+        self.logger.info("Dannay Retirement Planning System v0.3.1")
 
-        household = assumptions["household"]
-        portfolio = assumptions["portfolio"]
+        assumptions = load_assumptions(Path("data") / "assumptions.json")
+        engine = CashFlowEngine(assumptions)
+        projection = engine.run()
 
-        self.logger.info(
-            f'Loaded household: '
-            f'{household["primary"]["name"]} & {household["spouse"]["name"]}'
-        )
-        self.logger.info(
-            f'Total investable assets: '
-            f'${sum(portfolio.values()):,.0f}'
-        )
-        self.logger.info("Initialization complete.")
+        first = projection[0]
+
+        self.logger.info("")
+        self.logger.info("Retirement Projection")
+        self.logger.info("---------------------")
+        self.logger.info(f"Year: {first.year}")
+        self.logger.info(f"Your age: {first.your_age}")
+        self.logger.info(f"Spouse age: {first.spouse_age}")
+        self.logger.info(f"Portfolio: ${first.total_portfolio:,.0f}")
