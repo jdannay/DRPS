@@ -1,0 +1,6 @@
+{
+ "household":{"primary":{"name":"Jeffrey","birth_year":1960},
+ "spouse":{"name":"Kathryn","birth_year":1963}},
+ "portfolio":{"taxable":1570000,"traditional_ira":2375000,
+ "inherited_ira":255000,"roth_ira":40000}
+}
